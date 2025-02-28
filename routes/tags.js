@@ -21,4 +21,15 @@ router.get('/', (req, res) => {
   res.json(tags);
 });
 
+// Search for tags containing a particular tag element
+router.get('/search', (req, res) => {
+  const searchTerm = req.query.tag;
+  if (!searchTerm) {
+    return res.status(400).send('Tag query parameter is required');
+  }
+  const filteredTags = tags.filter(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+  res.json(filteredTags);
+});
+
+
 export default router;
