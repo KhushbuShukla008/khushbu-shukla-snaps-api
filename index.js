@@ -2,6 +2,8 @@ import express from 'express';
 import photoRoute from './routes/photos.js';
 import tagRoute from './routes/tags.js';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 dotenv.config();
 const PORT = process.env.PORT || 8081;
@@ -11,7 +13,10 @@ app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use(express.json());
 
-app.use('/public-image', express.static("./files"));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use('/public/images', express.static(path.join(__dirname, 'public/images')));
 
 app.use((req, res, next) => {
     req.user = {

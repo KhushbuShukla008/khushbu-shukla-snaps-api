@@ -10,8 +10,13 @@ const dataPath = path.join(__dirname, '../data/photos.json');
 
 // Read the photos data from the JSON file
 const readPhotosData = () => {
-    const data = fs.readFileSync(dataPath, 'utf8');
-    return JSON.parse(data);
+    try {
+        const data = fs.readFileSync(dataPath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading photos data:', error);
+        return [];
+    }
 };
 
 let photos = readPhotosData();
@@ -39,6 +44,11 @@ router.get('/:id/comments', (req, res) => {
 router.post('/:id/comments', (req, res) => {
     const photo = photos.find(p => p.id === req.params.id);
     if (!photo) return res.status(404).send('Photo not found');
+
+    const { name, comment } = req.body;
+    if (!name || !comment) {
+        return res.status(400).send('Name and comment are required');
+    }
 
     const newComment = {
         name: req.body.name,
