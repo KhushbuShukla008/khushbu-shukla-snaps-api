@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+// import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -37,7 +38,8 @@ router.get('/:id', (req, res) => {
 router.get('/:id/comments', (req, res) => {
     const photo = photos.find(p => p.id === req.params.id);
     if (!photo) return res.status(404).send('Photo not found');
-    res.json(photo.comments);
+    const sortedComments = photo.comments.sort((a, b) => b.timestamp - a.timestamp);
+    res.json(sortedComments);
 });
 
 // Add a comment to a photo
@@ -54,7 +56,7 @@ router.post('/:id/comments', (req, res) => {
         name: req.body.name,
         comment: req.body.comment,
         id: req.body.id,
-        timestamp: req.body.timestamp
+        timestamp: Date.now()
     };
     photo.comments.push(newComment);
     fs.writeFileSync(dataPath, JSON.stringify(photos, null, 2));
